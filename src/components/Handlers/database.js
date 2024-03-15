@@ -6,6 +6,7 @@ const schedulerDB = openDatabase({name: 'Scheduler.db'});
 
 // create constants for tables in database
 const hostTableName = 'hosts';
+const meetingsTableName = 'meetings';
 
 module.exports = {
     // declare function that will create hosts table
@@ -51,4 +52,48 @@ module.exports = {
             );
         });
     },
+
+    createMeetingsTable: async function () {
+        // declare transaction that will execute SQL
+        (await schedulerDB).transaction(txn => {
+            // execute SQL
+            txn.executeSql(
+                `CREATE TABLE IF NOT EXISTS ${meetingsTableName}(
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT,
+                    location TEXT,
+                    date TEXT
+                );`,
+                // arguments passed when using SQL prepared statements
+                [],
+                // callback functions to handle results
+                () => {
+                    console.log('Meetings table created successfully.');
+                },
+                error => {
+                    console.log('Error creating meetings table ' + error.message);
+                },
+            );
+        });
+    },
+
+    // declare function that will insert a row of data into the hosts table
+    addMeeting: async function (title, location, date) {
+        // declare transaction that will execute SQL
+        (await schedulerDB).transaction(txn => {
+            // execute SQL
+            txn.executeSql(
+                `INSERT INTO ${meetingsTableName} (title, location, date) VALUES ("${title}", "${location}", "${date}")`,
+                // arguments passed when using SQL prepared statements
+                [],
+                // callback functions to handle results
+                () => {
+                    console.log(name + ' added successfully.');
+                },
+                error => {
+                    console.log('Error adding meeting ' + error.message);
+                },
+            );
+        });
+    }
 };
